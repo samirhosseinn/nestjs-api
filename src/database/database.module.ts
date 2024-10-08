@@ -13,7 +13,7 @@ import { User } from 'src/user/entities/user.entity';
         username: configService.getOrThrow("DB_USERNAME"),
         password: configService.getOrThrow("DB_PASSWORD"),
         database: configService.getOrThrow("DB_NAME"),
-        dropSchema: true,
+        // dropSchema: true,
         synchronize: true,
         entities: [User]
       }),
