@@ -13,5 +13,5 @@ export class User {
     email: string;
 
     @Column({ type: 'varchar', length: 255, nullable: false })
-    password_hash: string;
+    password: string;
 }
