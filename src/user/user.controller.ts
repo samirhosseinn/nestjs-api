@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { UserService } from './user.service';
-import { LoginDTO, RegisterDTO } from './dto';
+import { chNameDTO, LoginDTO, RegisterDTO } from './dto';
 import { ResutlForm } from 'src/constatnts/result_form';
 
 @Controller('user')
@@ -32,6 +32,14 @@ export class UserController {
       result.body = { message: "credential error" };
     }
 
+    return result.toMap();
+  }
+
+  @Post('change/name')
+  async changeName(@Body() dto: chNameDTO) {
+    await this.userService.changeName(dto);
+    
+    const result = new ResutlForm(true, { message : "Name changed"});
     return result.toMap();
   }
 }

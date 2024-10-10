@@ -9,11 +9,12 @@ import {
 import { Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 import { Request } from 'express';
+import { EmailNotFound } from './custome_exception';
 
-@Catch(BadRequestException, QueryFailedError) // Catch both BadRequestException and QueryFailedError
+@Catch(BadRequestException, QueryFailedError, Error) // Catch both BadRequestException and QueryFailedError
 export class ValidationExceptionFilter implements ExceptionFilter {
   catch(
-    exception: BadRequestException | QueryFailedError,
+    exception: BadRequestException | QueryFailedError | Error,
     host: ArgumentsHost,
   ) {
     const ctx = host.switchToHttp();
@@ -40,7 +41,7 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     // Handling TypeORM errors (QueryFailedError)
     else if (exception instanceof QueryFailedError) {
       const error = exception as any;
-      
+
       // Check if it’s a unique constraint violation 
       if (error.code === "ER_DUP_ENTRY") {
         response.status(HttpStatus.CONFLICT).json({
@@ -60,6 +61,23 @@ export class ValidationExceptionFilter implements ExceptionFilter {
           message: error.message,
         });
       }
+    } else if (exception instanceof EmailNotFound) {
+      response.status(HttpStatus.CONFLICT).json({
+        success: false,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+        error: '404 Not Found',
+        message: 'Email Not Found',
+      });
+
+    } else {
+      response.status(HttpStatus.CONFLICT).json({
+        success: false,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+        error: 'Generic error',
+        exception
+      });
     }
   }
 }

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoginDTO, RegisterDTO } from './dto';
-import { dlopen } from 'process';
+import { chNameDTO, LoginDTO, RegisterDTO } from './dto';
+import { EmailNotFound } from 'src/Exception/custome_exception';
 
 @Injectable()
 export class UserService {
@@ -33,6 +33,17 @@ export class UserService {
       return true;
     } else {
       return false;
+    }
+  }
+
+  async changeName(chName: chNameDTO) {
+    const user = await this.user.findOne({ where: { email: chName.email } });
+
+    if (user) {
+      user.name = chName.name;
+      this.user.save(user);
+    } else {
+      throw new EmailNotFound();
     }
   }
 }
