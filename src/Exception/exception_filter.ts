@@ -40,9 +40,7 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     // Handling TypeORM errors (QueryFailedError)
     else if (exception instanceof QueryFailedError) {
       const error = exception as any;
-
-      console.log(error.code);
-
+      
       // Check if it’s a unique constraint violation 
       if (error.code === "ER_DUP_ENTRY") {
         response.status(HttpStatus.CONFLICT).json({
