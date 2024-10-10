@@ -4,6 +4,7 @@ import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { chNameDTO, LoginDTO, RegisterDTO } from './dto';
 import { EmailNotFound } from 'src/Exception/custome_exception';
+import { DeleteDTO } from './dto/delete.dto';
 
 @Injectable()
 export class UserService {
@@ -42,6 +43,16 @@ export class UserService {
     if (user) {
       user.name = chName.name;
       this.user.save(user);
+    } else {
+      throw new EmailNotFound();
+    }
+  }
+
+  async deleteUser(dto: DeleteDTO) {
+    const user = await this.user.findOne({ where: { email: dto.email } });
+
+    if (user) {
+      await this.user.delete(user);
     } else {
       throw new EmailNotFound();
     }

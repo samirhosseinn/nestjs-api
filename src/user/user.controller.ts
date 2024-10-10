@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { chNameDTO, LoginDTO, RegisterDTO } from './dto';
 import { ResutlForm } from 'src/constatnts/result_form';
+import { DeleteDTO } from './dto/delete.dto';
 
 @Controller('user')
 export class UserController {
@@ -38,8 +39,15 @@ export class UserController {
   @Post('change/name')
   async changeName(@Body() dto: chNameDTO) {
     await this.userService.changeName(dto);
-    
-    const result = new ResutlForm(true, { message : "Name changed"});
+
+    const result = new ResutlForm(true, { message: "Name changed" });
+    return result.toMap();
+  }
+
+  @Post('delete')
+  async deleteUser(@Body() dto: DeleteDTO) {
+    await this.userService.deleteUser(dto);
+    const result = new ResutlForm(true, { message: "user deleted" });
     return result.toMap();
   }
 }
